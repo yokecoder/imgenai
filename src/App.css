@@ -1,0 +1,93 @@
+/* App.css */
+body {
+  margin: 0;
+  padding: 0;
+}
+.app-container {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  background: #0f0f0f;
+  color: white;
+  height: 100vh;
+  font-family: Arial;
+  overflow:hidden;
+}
+.title-bar {
+  display: flex;
+  align-items: left;
+  justify-content: space-between;
+  padding: 10px;
+}
+.title-text {
+  font-size: 1.75em;
+  background: linear-gradient( 120deg ,#02b3dd,#2945be, #e12a2a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color:transparent;
+  
+}
+.gen-imgs-container {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-height: 70vh;
+  background: transparent;
+  align-items: center;
+  justify-content:top ;
+  overflow-x: scroll;
+  padding: 10px;
+}
+.para-text {
+  font-size: 1.50em;
+  background: linear-gradient( 95deg ,#02b3dd,#2945be, #e12a2a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color:transparent;
+  text-align: center;
+  
+}
+.prompt-cont{
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  position: fixed;
+  bottom: 0;
+  margin: 10px;
+  margin-bottom: 15px;
+  background: #1c1c1c;
+  height: auto;
+  width: auto;
+  z-index: 1;
+  border-radius:15px;
+  
+}
+.prompt-box {
+  color:#e0e0e0;
+  outline:none;
+  border: none;
+  resize: none;
+  background: inherit;
+  height: auto;
+  min-height: 10vh;
+  width: 73vw;
+  padding: 8px;
+  padding-top: 10px;
+  
+  border-radius: inherit ;
+  font-size: 1.3em;
+  font-family: Arial;
+}
+.gen-ico {
+  width: 35px;
+  height: 35px;
+  padding: 6px;
+  margin: 5px;
+  border-radius: 50%;
+  background: #121212;
+  
+  
+}
+.gen-ico:active {
+  background: black;
+  box-shadow: 3px 3px 4px #0d0d0d;
+}
