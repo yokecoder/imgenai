@@ -7,17 +7,36 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 /*
-todo 1: write logic to avoid saving same image twice in saveImage() function 
-todo 2: display the limit of the api
-todo 3: add toast alerts for save, download actions
-todo 4: enable CORS
+todo 1: add more api keys
 */
 export default function App() {
+    const GPT_API_KEYS = [
+        import.meta.env.VITE_GPT_API_KEY1,
+        import.meta.env.VITE_GPT_API_KEY2,
+        import.meta.env.VITE_GPT_API_KEY3
+    ];
+
+    // To verify it's working
+    const randomApiKey = (() => {
+        let index = 0;
+        let shuffledKeys = [];
+
+        return () => {
+            if (index === 0 || index >= shuffledKeys.length) {
+                shuffledKeys = [...GPT_API_KEYS].sort(
+                    () => Math.random() - 0.5
+                ); // Shuffle keys
+                index = 0;
+            }
+            return shuffledKeys[index++];
+        };
+    })();
+
+    const textareaRef = useRef(null);
     const [prompt, setPrompt] = useState("");
     const [savedImages, setSavedImages] = useState(() =>
         JSON.parse(localStorage.getItem("savedImages") ?? "[]")
     );
-    const textareaRef = useRef(null);
 
     const handleInput = () => {
         const textArea = textareaRef.current;
@@ -36,7 +55,6 @@ export default function App() {
             toast("Image Saved");
             return updated;
         });
-        
     };
 
     const fetchGenImage = async () => {
@@ -45,8 +63,7 @@ export default function App() {
             method: "POST",
             url: "https://chatgpt-42.p.rapidapi.com/texttoimage",
             headers: {
-                "x-rapidapi-key":
-                    "13107244c6mshfcb3037af722f60p1e22f0jsn56b9a0b9d6e5",
+                "x-rapidapi-key": `${randomApiKey()}`,
                 "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
                 "Content-Type": "application/json"
             },

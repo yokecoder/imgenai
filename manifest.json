@@ -1,0 +1,19 @@
+{
+    "short_name": "Imagine.AI",
+    "name": "Imagine.AI",
+    "icons": [
+        {
+            "src": "./assets/zOGenU22vxnPwfRWhLuh1741440431.3462353.png",
+            "type": "image/webp",
+            "sizes": "192x192"
+        },
+        {
+            "src": "./assets/zOGenU22vxnPwfRWhLuh1741440431.3462353.png",
+            "type": "image/webp",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0e0e10"
+}

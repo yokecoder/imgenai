@@ -1,5 +1,5 @@
 IMAGINE AI
->> URL : <to be deployed>
+>> URL : yet to be deployed
 
 AUTHOR : YOKESH K 
 
