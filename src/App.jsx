@@ -10,10 +10,18 @@ import "react-toastify/dist/ReactToastify.css";
 todo 1: add more api keys
 */
 export default function App() {
+    
     const GPT_API_KEYS = [
         import.meta.env.VITE_GPT_API_KEY1,
         import.meta.env.VITE_GPT_API_KEY2,
-        import.meta.env.VITE_GPT_API_KEY3
+        import.meta.env.VITE_GPT_API_KEY3,
+        import.meta.env.VITE_GPT_API_KEY4,
+        import.meta.env.VITE_GPT_API_KEY5,
+        import.meta.env.VITE_GPT_API_KEY6,
+        import.meta.env.VITE_GPT_API_KEY7,
+        import.meta.env.VITE_GPT_API_KEY8,
+        import.meta.env.VITE_GPT_API_KEY9,
+        import.meta.env.VITE_GPT_API_KEY10
     ];
 
     // To verify it's working
