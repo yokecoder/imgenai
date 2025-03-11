@@ -1,5 +1,5 @@
 IMAGINE AI
->> URL : yet to be deployed
+>> URL : https://imgenai-xi.vercel.app/
 
 AUTHOR : YOKESH K 
 
