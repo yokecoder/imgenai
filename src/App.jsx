@@ -1,199 +1,152 @@
-import React, { useState, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import IconButton from "@mui/material/IconButton";
-import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
-import { ToastContainer, toast } from "react-toastify";
+import { useState } from "react";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-/*
-todo 1: add more api keys
-*/
+import Header from "./components/Header";
+import GeneratorView from "./components/GeneratorView";
+import SavedGallery from "./components/SavedGallery";
+import PromptInput from "./components/PromptInput";
+import PresetPrompts from "./components/PresetPrompts";
+import LightboxModal from "./components/LightboxModal";
+
+import { useImageGenerator } from "./hooks/useImageGenerator";
+import { useSavedImages } from "./hooks/useSavedImages";
+
 export default function App() {
-    
-    const GPT_API_KEYS = [
-        import.meta.env.VITE_GPT_API_KEY1,
-        import.meta.env.VITE_GPT_API_KEY2,
-        import.meta.env.VITE_GPT_API_KEY3,
-        import.meta.env.VITE_GPT_API_KEY4,
-        import.meta.env.VITE_GPT_API_KEY5,
-        import.meta.env.VITE_GPT_API_KEY6,
-        import.meta.env.VITE_GPT_API_KEY7,
-        import.meta.env.VITE_GPT_API_KEY8,
-        import.meta.env.VITE_GPT_API_KEY9,
-        import.meta.env.VITE_GPT_API_KEY10
-    ];
+  const {
+    prompt,
+    setPrompt,
+    aspectRatio,
+    setAspectRatio,
+    isGenerating,
+    generatedImage,
+    activePrompt,
+    errorMessage,
+    generationTime,
+    handleGenerate,
+    getRandomPrompt,
+  } = useImageGenerator();
 
-    // To verify it's working
-    const randomApiKey = (() => {
-        let index = 0;
-        let shuffledKeys = [];
+  const {
+    savedImages,
+    saveImage,
+    deleteImage,
+    clearAllSaved,
+    isSaved,
+  } = useSavedImages();
 
-        return () => {
-            if (index === 0 || index >= shuffledKeys.length) {
-                shuffledKeys = [...GPT_API_KEYS].sort(
-                    () => Math.random() - 0.5
-                ); // Shuffle keys
-                index = 0;
-            }
-            return shuffledKeys[index++];
-        };
-    })();
+  const [showSaved, setShowSaved] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState(null);
 
-    const textareaRef = useRef(null);
-    const [prompt, setPrompt] = useState("");
-    const [savedImages, setSavedImages] = useState(() =>
-        JSON.parse(localStorage.getItem("savedImages") ?? "[]")
-    );
+  const handleSelectPresetPrompt = (selectedPrompt) => {
+    setPrompt(selectedPrompt);
+    handleGenerate(selectedPrompt);
+  };
 
-    const handleInput = () => {
-        const textArea = textareaRef.current;
-        textArea.style.height = "auto";
-        textArea.style.height = textArea.scrollHeight + "px";
-    };
-    const saveImage = src => {
-        setSavedImages(prev => {
-            if (prev.includes(src)) {
-                toast("Image is Already Saved");
-                return prev;
-            } // Avoid duplicates
+  const handleUsePromptFromGallery = (promptText) => {
+    setPrompt(promptText);
+    setShowSaved(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-            const updated = [src, ...prev];
-            localStorage.setItem("savedImages", JSON.stringify(updated));
-            toast("Image Saved");
-            return updated;
-        });
-    };
+  return (
+    <div className="app-shell">
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        newestOnTop
+        hideProgressBar
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        theme="dark"
+        toastClassName="custom-toast"
+      />
 
-    const fetchGenImage = async () => {
-        if (!prompt) return null;
-        const options = {
-            method: "POST",
-            url: "https://chatgpt-42.p.rapidapi.com/texttoimage",
-            headers: {
-                "x-rapidapi-key": `${randomApiKey()}`,
-                "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
-                "Content-Type": "application/json"
-            },
-            data: {
-                text: prompt,
-                width: 284,
-                height: 284
-            }
-        };
+      <Header
+        savedCount={savedImages.length}
+        toggleSavedGallery={() => setShowSaved((prev) => !prev)}
+        showSaved={showSaved}
+      />
 
-        try {
-            const response = await axios.request(options);
-            return response.data;
-        } catch (error) {
-            console.error("Error fetching image:", error);
-            return null;
-        }
-    };
+      <main className="app-main-content">
+        {showSaved ? (
+          <SavedGallery
+            savedImages={savedImages}
+            onDeleteImage={deleteImage}
+            onClearAll={clearAllSaved}
+            onOpenLightbox={(img) => setLightboxImage(img)}
+            onUsePrompt={handleUsePromptFromGallery}
+          />
+        ) : (
+          <div className="workspace-container">
+            <GeneratorView
+              isGenerating={isGenerating}
+              generatedImage={generatedImage}
+              errorMessage={errorMessage}
+              activePrompt={activePrompt}
+              generationTime={generationTime}
+              onSaveImage={saveImage}
+              onRegenerate={() => handleGenerate(activePrompt)}
+              onOpenLightbox={(img) => setLightboxImage(img)}
+              isSaved={isSaved}
+            />
 
-    const {
-        data: imageData,
-        isLoading,
-        isFetching,
-        refetch
-    } = useQuery({
-        queryKey: ["generatedImage"],
-        queryFn: fetchGenImage,
-        enabled: false,
-        cacheTime: 1000 * 60 * 30
-    });
+            {!generatedImage && !isGenerating && (
+              <PresetPrompts
+                onSelectPrompt={handleSelectPresetPrompt}
+                isGenerating={isGenerating}
+              />
+            )}
 
-    return (
-        <>
-            <div className="app-container">
-                <ToastContainer
-                    position="top-center"
-                    autoClose={3000}
-                    newestOnTop
-                    hideProgressBar
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    theme="dark"
-                />
-                <div className="title-bar">
-                    <span className="title-text">imagine.ai</span>
+            {savedImages.length > 0 && (
+              <div className="inline-saved-section">
+                <div className="inline-saved-header">
+                  <h3>Saved Artwork</h3>
+                  <button
+                    type="button"
+                    className="view-all-link"
+                    onClick={() => setShowSaved(true)}
+                  >
+                    View All ({savedImages.length}) &rarr;
+                  </button>
                 </div>
-                {savedImages.length > 0 && (
-                    <div className="saved-imgs-layout">
-                        <h3 className="colored-txt">Saved Images</h3>
-                        <div className="saved-imgs-carousel">
-                            {savedImages.map((image, index) => (
-                                <img
-                                    key={index}
-                                    src={image}
-                                    className="saved-image"
-                                    alt="Saved"
-                                />
-                            ))}
-                        </div>
+                <div className="inline-saved-scroll">
+                  {savedImages.slice(0, 8).map((img) => (
+                    <div
+                      key={img.id || img.url}
+                      className="inline-saved-card"
+                      onClick={() => setLightboxImage(img)}
+                      title={img.prompt || "Saved image"}
+                    >
+                      <img src={img.url} alt={img.prompt || "Saved"} />
                     </div>
-                )}
-
-                <div className="gen-imgs-container">
-                    {!prompt && !imageData && (
-                        <p className="para-text">
-                            Turn Your Ideas into Stunning Images!!
-                        </p>
-                    )}
-                    {(isLoading || isFetching) && (
-                        <div className="loader"></div>
-                    )}
-                    {imageData && !isLoading && !isFetching && (
-                        <>
-                            <p className="desc-text colored-txt">
-                                Here is your generated image
-                            </p>
-                            <img
-                                src={imageData?.generated_image}
-                                className="generated-image"
-                                height="256px"
-                                width="256px"
-                                alt="Generated"
-                            />
-                            <div className="image-options">
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        saveImage(imageData?.generated_image)
-                                    }
-                                    className="img-opt-button">
-                                    Save
-                                </button>
-                                <a
-                                    href={imageData?.generated_image}
-                                    onClick={() =>
-                                        toast("Downloading Image !!")
-                                    }
-                                    download="generated-image .jpg"
-                                    className="img-opt-button">
-                                    Download
-                                </a>
-                            </div>
-                        </>
-                    )}
+                  ))}
                 </div>
-            </div>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
 
-            <div className={`prompt-cont ${prompt ? "active" : ""}`}>
-                <textarea
-                    type="text"
-                    ref={textareaRef}
-                    onInput={handleInput}
-                    className="prompt-box"
-                    value={prompt}
-                    onChange={e => setPrompt(e.target.value)}
-                    placeholder="Express your imaginations here"></textarea>
+      <PromptInput
+        prompt={prompt}
+        setPrompt={setPrompt}
+        aspectRatio={aspectRatio}
+        setAspectRatio={setAspectRatio}
+        onGenerate={() => handleGenerate()}
+        onRandomPrompt={getRandomPrompt}
+        isGenerating={isGenerating}
+      />
 
-                <IconButton onClick={refetch}>
-                    <AutoFixHighIcon className="gen-ico" />
-                </IconButton>
-            </div>
-        </>
-    );
+      {lightboxImage && (
+        <LightboxModal
+          image={lightboxImage}
+          onClose={() => setLightboxImage(null)}
+          onSave={saveImage}
+          isSaved={isSaved}
+        />
+      )}
+    </div>
+  );
 }

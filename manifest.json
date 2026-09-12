@@ -1,19 +1,19 @@
 {
-    "short_name": "Imagine.AI",
-    "name": "Imagine.AI",
-    "icons": [
-        {
-            "src": "./assets/zOGenU22vxnPwfRWhLuh1741440431.3462353.png",
-            "type": "image/webp",
-            "sizes": "192x192"
-        },
-        {
-            "src": "./assets/zOGenU22vxnPwfRWhLuh1741440431.3462353.png",
-            "type": "image/webp",
-            "sizes": "512x512"
-        }
-    ],
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#0e0e10"
+  "short_name": "Imagine AI",
+  "name": "Imagine AI - Modern AI Image Generator",
+  "description": "Transform your imagination into stunning AI-generated artwork instantly.",
+  "icons": [
+    {
+      "src": "/assets/zOGenU22vxnPwfRWhLuh1741440431.3462353.png",
+      "type": "image/png",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0b0c10",
+  "background_color": "#0b0c10",
+  "categories": ["graphics", "productivity", "utilities"]
 }
